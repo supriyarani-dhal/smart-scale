@@ -1,6 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
+import { PrismaClient } from "@prisma/client/extension";
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
+
+const prisma = new PrismaClient();
 
 // Configuration
 cloudinary.config({
@@ -11,23 +14,39 @@ cloudinary.config({
 
 interface CloudinaryUploadResult {
   public_id: string;
+  bytes: number;
+  duration?: number;
   [key: string]: unknown; //this is a dynamic key means we have more stuff in this object
 }
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "You are not authorized to upload images" },
-      { status: 401 }
-    );
-  }
-
   try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You are not authorized to upload videos" },
+        { status: 401 }
+      );
+    }
+
+    if (
+      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      return NextResponse.json(
+        { error: "Missing Cloudinary credentials" },
+        { status: 500 }
+      );
+    }
+
     // Get the file from the request
     const formData = request.formData();
     const file = ((await formData).get("file") as File) || null;
+    const title = (await formData).get("title") as string;
+    const description = (await formData).get("description") as string;
+    const originalSize = (await formData).get("originalSize") as string;
 
     if (!file) {
       return NextResponse.json({ error: "No file found" }, { status: 400 });
@@ -45,7 +64,9 @@ export async function POST(request: NextRequest) {
         cloudinary.uploader
           .upload_stream(
             {
-              folder: "nextjs-image-upload",
+              resource_type: "video",
+              folder: "video-uploads",
+              transformation: [{ quality: "auto", fetch_format: "auto" }],
             },
             (error, result) => {
               if (error) {
@@ -59,12 +80,26 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    return NextResponse.json({ publicId: result.public_id }, { status: 200 });
+    // Save the video to the database(prisma)
+    const video = prisma.video.create({
+      data: {
+        title,
+        description,
+        originalSize,
+        publicId: result.public_id,
+        compressedSize: String(result.bytes),
+        duration: result.duration || 0,
+      },
+    });
+
+    return NextResponse.json(video);
   } catch (error) {
-    console.log("Error uploading image", error);
+    console.log("Error uploading video", error);
     return NextResponse.json(
-      { error: "Error uploading image" },
+      { error: "Error uploading video" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
