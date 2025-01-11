@@ -81,7 +81,7 @@ const SocialShare = () => {
       setUploadedImage(data.public_id);
     } catch (error) {
       console.error(error);
-      alert("Failed to upload image. Please try again.");
+      alert("Failed to upload image. Please try again."); //todo
     } finally {
       setIsUploading(false);
     }
