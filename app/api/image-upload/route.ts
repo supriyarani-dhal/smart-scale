@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Configuration
 cloudinary.config({
-  cloud_name: "process.env.NEXT_CLOUDINARY_CLOUD_NAME",
-  api_key: "process.env.CLOUDINARY_API_KEY",
-  api_secret: "process.env.CLOUDINARY_API_SECRET", // Click 'View API Keys' above to copy your API secret
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
 });
 
 interface CloudinaryUploadResult {
@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Get the file from the request
-    const formData = request.formData();
-    const file = ((await formData).get("file") as File) || null;
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file found" }, { status: 400 });
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log(result);
+    console.log(result.public_id);
 
     return NextResponse.json({ publicId: result.public_id }, { status: 200 });
   } catch (error) {

@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 // Configuration
 cloudinary.config({
-  cloud_name: "process.env.NEXT_CLOUDINARY_CLOUD_NAME",
-  api_key: "process.env.CLOUDINARY_API_KEY",
-  api_secret: "process.env.CLOUDINARY_API_SECRET", // Click 'View API Keys' above to copy your API secret
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET, // Click 'View API Keys' above to copy your API secret
 });
 
 interface CloudinaryUploadResult {
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (
-      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+      !process.env.NEXT_CLOUDINARY_CLOUD_NAME ||
       !process.env.CLOUDINARY_API_KEY ||
       !process.env.CLOUDINARY_API_SECRET
     ) {
@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
           .end(buffer);
       }
     );
+    console.log(result);
 
     // Save the video to the database(prisma)
     const video = prisma.video.create({
@@ -91,6 +92,8 @@ export async function POST(request: NextRequest) {
         duration: result.duration || 0,
       },
     });
+
+    console.log(video);
 
     return NextResponse.json(video);
   } catch (error) {

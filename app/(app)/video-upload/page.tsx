@@ -1,5 +1,7 @@
+"use client";
+
 import axios from "axios";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const VideoUpload = () => {
@@ -8,7 +10,7 @@ const VideoUpload = () => {
   const [description, setDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
-  const router = useRouter();
+  //const router = useRouter();
 
   //max file size is 70mb
   const MAX_FILE_SIZE = 70 * 1024 * 1024;
@@ -31,7 +33,8 @@ const VideoUpload = () => {
     formData.append("originalSize", file.size.toString());
 
     try {
-      await axios.post("/api/video-upload", formData);
+      const response = await axios.post("/api/video-upload", formData);
+      console.log(response);
 
       //check for 200 response
     } catch (error) {
