@@ -42,11 +42,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the file from the request
-    const formData = request.formData();
-    const file = ((await formData).get("file") as File) || null;
-    const title = (await formData).get("title") as string;
-    const description = (await formData).get("description") as string;
-    const originalSize = (await formData).get("originalSize") as string;
+    const formData = await request.formData();
+    const file = (formData.get("file") as File) || null;
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const originalSize = formData.get("originalSize") as string;
 
     if (!file) {
       return NextResponse.json({ error: "No file found" }, { status: 400 });
