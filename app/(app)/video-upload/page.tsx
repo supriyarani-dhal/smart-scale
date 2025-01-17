@@ -3,6 +3,7 @@
 import axios from "axios";
 //import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const VideoUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -36,7 +37,10 @@ const VideoUpload = () => {
       const response = await axios.post("/api/video-upload", formData);
       console.log(response);
 
-      //check for 200 response
+      if (!response.ok) {
+        toast.error("Failed to upload image");
+        throw new Error(`Failed to upload image: ${response.statusText}`);
+      }
     } catch (error) {
       console.log(error);
     } finally {

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
+import { toast } from "react-toastify";
 
 const socialFormats = {
   "Linkedin Profile (1:1)": {
@@ -74,14 +75,16 @@ const SocialShare = () => {
       console.log(response); //todo
 
       if (!response.ok) {
+        toast.error("Failed to upload image");
         throw new Error(`Failed to upload image: ${response.statusText}`);
       }
 
       const data = await response.json();
       setUploadedImage(data.publicId);
+      toast.success("Image uploaded successfully");
     } catch (error) {
       console.error(error);
-      alert("Failed to upload image. Please try again."); //todo
+      toast.error("Failed to upload image. Please try again.");
     } finally {
       setIsUploading(false);
     }
