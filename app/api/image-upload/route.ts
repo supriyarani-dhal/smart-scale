@@ -59,8 +59,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log(result.public_id);
-
     return NextResponse.json({ publicId: result.public_id }, { status: 200 });
   } catch (error) {
     console.log("Error uploading image", error);

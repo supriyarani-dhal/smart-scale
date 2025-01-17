@@ -21,7 +21,7 @@ const VideoUpload = () => {
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      alert("File size too large"); //todo
+      toast.warning("File size is too large");
       return;
     }
 
@@ -37,10 +37,12 @@ const VideoUpload = () => {
       const response = await axios.post("/api/video-upload", formData);
       console.log(response);
 
-      if (!response.ok) {
-        toast.error("Failed to upload image");
-        throw new Error(`Failed to upload image: ${response.statusText}`);
+      if (response.status !== 200 && response.data === null) {
+        toast.error("Failed to upload video");
+        throw new Error(`Failed to upload video: ${response.statusText}`);
       }
+
+      toast.success("Video uploaded successfully");
     } catch (error) {
       console.log(error);
     } finally {

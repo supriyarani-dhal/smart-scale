@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (
-      !process.env.NEXT_CLOUDINARY_CLOUD_NAME ||
+      !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
       !process.env.CLOUDINARY_API_KEY ||
       !process.env.CLOUDINARY_API_SECRET
     ) {
@@ -79,10 +79,9 @@ export async function POST(request: NextRequest) {
           .end(buffer);
       }
     );
-    console.log(result);
 
     // Save the video to the database(prisma)
-    const video = prisma.video.create({
+    const video = await prisma.video.create({
       data: {
         title,
         description,
@@ -92,8 +91,6 @@ export async function POST(request: NextRequest) {
         duration: result.duration || 0,
       },
     });
-
-    console.log(video);
 
     return NextResponse.json(video);
   } catch (error) {

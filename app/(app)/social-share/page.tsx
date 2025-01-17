@@ -72,8 +72,6 @@ const SocialShare = () => {
         body: formData,
       });
 
-      console.log(response); //todo
-
       if (!response.ok) {
         toast.error("Failed to upload image");
         throw new Error(`Failed to upload image: ${response.statusText}`);
