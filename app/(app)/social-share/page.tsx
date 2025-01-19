@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { toast } from "react-toastify";
+import { CheckIcon } from "lucide-react";
 
 const socialFormats = {
   "Linkedin Profile (1:1)": {
@@ -46,6 +47,9 @@ const SocialShare = () => {
   );
   const [isUploading, setIsUploading] = useState(false);
   const [isTransfering, setIsTransfering] = useState(false);
+  const [removeBackground, setRemoveBackground] = useState(false);
+  const [fillBackground, setFillBackground] = useState(false);
+  const [restoreImage, setRestoreImage] = useState(false);
   //this image reference is used to handle the downloading part
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -53,7 +57,13 @@ const SocialShare = () => {
     if (uploadedImage) {
       setIsTransfering(true);
     }
-  }, [selectedFormat, uploadedImage]);
+  }, [
+    selectedFormat,
+    uploadedImage,
+    removeBackground,
+    fillBackground,
+    restoreImage,
+  ]);
 
   // This function will be called when the user selects a file to upload
   const handleFileChange = async (
@@ -118,6 +128,18 @@ const SocialShare = () => {
       });
   };
 
+  const handleRemoveBg = async () => {
+    setRemoveBackground(!removeBackground);
+  };
+
+  const handleEnhanceImage = async () => {
+    setRestoreImage(!restoreImage);
+  };
+
+  const handleFillBg = async () => {
+    setFillBackground(!fillBackground);
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6 text-center">
@@ -156,8 +178,10 @@ const SocialShare = () => {
                     setSelectedFormat(e.target.value as SocialShareFormat)
                   }
                 >
-                  {Object.keys(socialFormats).map((format) => (
-                    <option key={format} value={format}></option>
+                  {Object.keys(socialFormats).map((format: string) => (
+                    <option key={format} value={format} className="text-md">
+                      {format}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -171,25 +195,104 @@ const SocialShare = () => {
                     </div>
                   )}
 
-                  <CldImage
-                    width={socialFormats[selectedFormat].width}
-                    height={socialFormats[selectedFormat].height}
-                    src={uploadedImage}
-                    sizes="100vw"
-                    alt="Transfered Image"
-                    crop={"fill"}
-                    aspectRatio={socialFormats[selectedFormat].aspectRatio}
-                    gravity="auto"
-                    ref={imageRef}
-                    onLoad={() => setIsTransfering(false)}
-                  />
+                  {removeBackground && (
+                    <CldImage
+                      width={socialFormats[selectedFormat].width}
+                      height={socialFormats[selectedFormat].height}
+                      src={uploadedImage}
+                      sizes="100vw"
+                      removeBackground
+                      alt="Transfered Image"
+                      crop={"fill"}
+                      aspectRatio={socialFormats[selectedFormat].aspectRatio}
+                      gravity="auto"
+                      ref={imageRef}
+                      onLoad={() => setIsTransfering(false)}
+                    />
+                  )}
+
+                  {fillBackground && (
+                    <CldImage
+                      width={socialFormats[selectedFormat].width}
+                      height={socialFormats[selectedFormat].height}
+                      src={uploadedImage}
+                      sizes="100vw"
+                      fillBackground
+                      alt="Transfered Image"
+                      crop={"fill"}
+                      aspectRatio={socialFormats[selectedFormat].aspectRatio}
+                      gravity="auto"
+                      ref={imageRef}
+                      onLoad={() => setIsTransfering(false)}
+                    />
+                  )}
+
+                  {restoreImage && (
+                    <CldImage
+                      width={socialFormats[selectedFormat].width}
+                      height={socialFormats[selectedFormat].height}
+                      src={uploadedImage}
+                      sizes="100vw"
+                      restore
+                      alt="Transfered Image"
+                      crop={"fill"}
+                      aspectRatio={socialFormats[selectedFormat].aspectRatio}
+                      gravity="auto"
+                      ref={imageRef}
+                      onLoad={() => setIsTransfering(false)}
+                    />
+                  )}
+
+                  {!removeBackground && !restoreImage && !fillBackground && (
+                    <CldImage
+                      width={socialFormats[selectedFormat].width}
+                      height={socialFormats[selectedFormat].height}
+                      src={uploadedImage}
+                      sizes="100vw"
+                      alt="Transfered Image"
+                      crop={"fill"}
+                      aspectRatio={socialFormats[selectedFormat].aspectRatio}
+                      gravity="auto"
+                      ref={imageRef}
+                      onLoad={() => setIsTransfering(false)}
+                    />
+                  )}
                 </div>
               </div>
 
-              <div className="card-actions justify-end mt-6">
-                <button className="btn btn-primary" onClick={handleDownload}>
-                  Download for {selectedFormat}{" "}
-                </button>
+              <div className="grid grid-cols-4 gap-4 mt-6">
+                <div>
+                  <button
+                    className="btn btn-outline btn-info grid grid-cols-2"
+                    onClick={handleRemoveBg}
+                  >
+                    <span className="w-36">Remove Background</span>
+                    {removeBackground && <CheckIcon className="ml-16" />}
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="btn btn-outline btn-secondary grid grid-cols-2"
+                    onClick={handleEnhanceImage}
+                  >
+                    <span className="w-36">Enhance Image</span>
+                    {restoreImage && <CheckIcon className="ml-16" />}
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="btn btn-outline btn-accent grid grid-cols-2"
+                    onClick={handleFillBg}
+                  >
+                    <span className="w-36">Fill Background</span>
+                    {fillBackground && <CheckIcon className="ml-16" />}
+                  </button>
+                </div>
+                <div>
+                  <button className="btn btn-primary" onClick={handleDownload}>
+                    Download for {selectedFormat}{" "}
+                  </button>
+                </div>
               </div>
             </div>
           )}

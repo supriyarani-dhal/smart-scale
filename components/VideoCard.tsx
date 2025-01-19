@@ -4,17 +4,24 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Video } from "@prisma/client";
 import { getCldImageUrl, getCldVideoUrl } from "next-cloudinary";
 import { filesize } from "filesize";
-import { Clock, Download, FileDown, FileUp } from "lucide-react";
+import { Clock, Download, FileDown, FileUp, X } from "lucide-react";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 dayjs.extend(relativeTime);
 
 interface VideoCardProps {
   video: Video;
   onDownload: (url: string, title: string) => void;
+  onRemove: (id: string) => void;
 }
 
 //React.FC<VideoCardProps> defines that this method will return a React Functional Component of VideoCardProps type
-const VideoCard: React.FC<VideoCardProps> = ({ video, onDownload }) => {
+const VideoCard: React.FC<VideoCardProps> = ({
+  video,
+  onDownload,
+  onRemove,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const [previewError, setPreviewError] = useState(false);
 
@@ -76,6 +83,24 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDownload }) => {
     setPreviewError(true);
   };
 
+  const handleDeleteVideo = async () => {
+    try {
+      const response = await axios.delete(`/api/delete-video/${video.id}`);
+
+      toast.success(response.data.message);
+
+      onRemove(video.id);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.log(axiosError);
+
+      toast.error(
+        (axiosError.response?.data as { message: string })?.message ||
+          "Error deleting video"
+      );
+    }
+  };
+
   return (
     <div
       className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300"
@@ -105,6 +130,13 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDownload }) => {
             className="w-full h-full object-cover"
           />
         )}
+
+        <button
+          onClick={handleDeleteVideo}
+          className="btn btn-neutral btn-sm btn-circle bg-base-100 bg-opacity-70 hover:bg-opacity-100 absolute top-2 right-2 rounded-full"
+        >
+          <X size={18} />
+        </button>
 
         <div className="absolute bottom-2 right-2 bg-base-100 bg-opacity-70 px-2 py-1 rounded-lg text-sm flex items-center">
           <Clock className="mr-1" size={16} /> {formatDuration(video.duration)}

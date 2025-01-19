@@ -12,8 +12,6 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log(videos);
-
     return NextResponse.json(videos);
   } catch (error) {
     return NextResponse.json(

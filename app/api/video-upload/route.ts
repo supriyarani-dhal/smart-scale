@@ -94,9 +94,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(video);
   } catch (error) {
-    console.log("Error uploading video", error);
     return NextResponse.json(
-      { error: "Error uploading video" },
+      { error: error || "Error uploading video" },
       { status: 500 }
     );
   } finally {

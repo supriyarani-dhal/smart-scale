@@ -61,13 +61,49 @@ const Home = () => {
     document.body.removeChild(link);
   }, []);
 
+  const handleRemove = useCallback(async (videoId: string) => {
+    setVideos(videos.filter((video) => video.id !== videoId));
+  }, []);
+
   if (loading) {
     return (
-      <div className="flex w-52 flex-col gap-4">
-        <div className="skeleton h-32 w-full"></div>
-        <div className="skeleton h-4 w-28"></div>
-        <div className="skeleton h-4 w-full"></div>
-        <div className="skeleton h-4 w-full"></div>
+      <div className="flex flex-wrap justify-between gap-4">
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
+        <div className="flex w-96 flex-col gap-4">
+          <div className="skeleton h-72 w-full"></div>
+          <div className="skeleton h-4 w-28"></div>
+          <div className="skeleton h-4 w-full"></div>
+          <div className="skeleton h-4 w-full"></div>
+        </div>
       </div>
     );
   }
@@ -86,6 +122,7 @@ const Home = () => {
               key={video.id}
               video={video}
               onDownload={handleDownload}
+              onRemove={handleRemove}
             />
           ))}
         </div>
