@@ -31,8 +31,6 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File | null;
     const originalSize = formData.get("originalSize") as string;
 
-    console.log(originalSize);
-
     if (!file) {
       return NextResponse.json({ error: "No file found" }, { status: 400 });
     }
@@ -71,6 +69,7 @@ export async function POST(request: NextRequest) {
         publicId: result.public_id,
         width: result.width,
         height: result.height,
+        originalSize: originalSize,
         compressedSize: result.bytes,
       },
       { status: 200 }

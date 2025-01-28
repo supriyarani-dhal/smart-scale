@@ -8,11 +8,12 @@ const publicApiRoute = createRouteMatcher(["/api/videos"]);
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   const currUrl = new URL(req.url);
-  const isAccessingDashboard = currUrl.pathname === "/home";
+  const isAccessingDashboard = currUrl.pathname === "/";
+  const isAccessingHome = currUrl.pathname === "/home";
   const isApiRequest = currUrl.pathname.startsWith("/api");
 
-  //if user is not logged in then redirect them to home page
-  if (userId && publicRoute(req) && !isAccessingDashboard) {
+  //if user is logged in then redirect them to home page
+  if (userId && publicRoute(req) && !isAccessingHome) {
     return NextResponse.redirect(new URL("/home", req.url));
   }
 
@@ -26,6 +27,11 @@ export default clerkMiddleware(async (auth, req) => {
     //if the user is trying to access the protected api route
     if (isApiRequest && !publicApiRoute(req)) {
       return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
+
+    //if the user is trying to access the dashboard
+    if (isAccessingDashboard) {
+      return NextResponse.redirect(new URL("/home", req.url));
     }
   }
 

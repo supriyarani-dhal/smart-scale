@@ -24,11 +24,14 @@ const ImageCompress = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
+    console.log(file);
+
     if (!file) return;
     setIsUploading(true);
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("originalSize", file.size.toString());
 
     try {
       const response = await fetch("/api/image-compress", {
@@ -148,6 +151,7 @@ const ImageCompress = () => {
                     value={selectedFormat}
                     onChange={(e) => setSelectedFormat(e.target.value)}
                   >
+                    <option value="auto">automatic</option>
                     <option value="jpeg">JPEG</option>
                     <option value="png">PNG</option>
                     <option value="webp">WEBP</option>
