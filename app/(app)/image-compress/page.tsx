@@ -4,16 +4,18 @@ import { filesize } from "filesize";
 import { CldImage } from "next-cloudinary";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { ArrowDownToLine, ImageDown, ImageUp } from "lucide-react";
 
 const ImageCompress = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isTransfering, setIsTransfering] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [selectedFormat, setSelectedFormat] = useState("png");
+  const [format, setFormat] = useState(null);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-
+  const [originalSize, setOriginalSize] = useState(0);
+  const [compressedSize, setCompressedSize] = useState(0);
   useEffect(() => {
     if (uploadedImage) {
       setIsTransfering(true);
@@ -49,6 +51,10 @@ const ImageCompress = () => {
       setUploadedImage(data.publicId);
       setWidth(data.width);
       setHeight(data.height);
+      setFormat(data.format);
+      setOriginalSize(data.originalSize);
+      setCompressedSize(data.compressedSize);
+
       toast.success("Image uploaded successfully");
     } catch (error) {
       console.error(error);
@@ -71,7 +77,7 @@ const ImageCompress = () => {
         //<a href = {url}> </a>
         link.href = url;
         //<a href = {url} download = "image.png"> </a>
-        link.download = `${selectedFormat
+        link.download = `${"smart_scale_img"
           .replace(/\s+/g, "_")
           .toLowerCase()}.png`;
         //we are appending the link(<a></a>) to the body
@@ -87,13 +93,13 @@ const ImageCompress = () => {
       });
   };
 
-  // const formatFileSize = useCallback((size: number) => {
-  //   return filesize(size);
-  // }, []);
+  const formatFileSize = useCallback((size: number) => {
+    return filesize(size);
+  }, []);
 
-  // const compressionPercentage = Math.round(
-  //   (1 - Number(video.compressedSize) / Number(video.originalSize)) * 100
-  // );
+  const compressionPercentage = Math.round(
+    (1 - Number(compressedSize) / Number(originalSize)) * 100
+  );
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
@@ -143,25 +149,45 @@ const ImageCompress = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between mt-6">
-                <div>
-                  <label htmlFor="format">Select Format</label>
-                  <select
-                    className="select select-bordered w-full"
-                    value={selectedFormat}
-                    onChange={(e) => setSelectedFormat(e.target.value)}
-                  >
-                    <option value="auto">automatic</option>
-                    <option value="jpeg">JPEG</option>
-                    <option value="png">PNG</option>
-                    <option value="webp">WEBP</option>
-                  </select>
+              {/* size information */}
+              <div className="space-y-4 mt-8">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600 flex justify-between">
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">
+                        Original Size
+                      </p>
+                      <p className="text-lg font-semibold text-white">
+                        {formatFileSize(originalSize)}
+                      </p>
+                    </div>
+                    <ImageUp />
+                  </div>
+                  <div className="bg-gray-700/50 p-4 rounded-lg border border-blue-600 flex justify-between">
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">
+                        Compressed Size
+                      </p>
+                      <p className="text-lg font-semibold text-white">
+                        {formatFileSize(compressedSize)}
+                      </p>
+                    </div>
+                    <ImageDown />
+                  </div>
                 </div>
-                <div>
-                  <button className="btn btn-primary" onClick={handleDownload}>
-                    Download for {selectedFormat}{" "}
-                  </button>
-                </div>
+              </div>
+
+              <div className="bg-blue-900/30 p-4 rounded-lg border border-blue-800 mt-6">
+                <p className="text-sm text-blue-300 mb-1">Compression Ratio</p>
+                <p className="text-lg font-semibold text-blue-200">
+                  {compressionPercentage}% reduced
+                </p>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button className="btn btn-primary" onClick={handleDownload}>
+                  Download for {format} <ArrowDownToLine />
+                </button>
               </div>
             </div>
           )}

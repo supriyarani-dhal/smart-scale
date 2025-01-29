@@ -62,8 +62,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log(result);
-
     return NextResponse.json(
       {
         publicId: result.public_id,
@@ -71,6 +69,7 @@ export async function POST(request: NextRequest) {
         height: result.height,
         originalSize: originalSize,
         compressedSize: result.bytes,
+        format: result.format,
       },
       { status: 200 }
     );
