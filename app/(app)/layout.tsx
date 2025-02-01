@@ -4,6 +4,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import {
   ImageMinus,
   LayoutDashboardIcon,
+  LogIn,
   LogOutIcon,
   MenuIcon,
   Share2Icon,
@@ -12,6 +13,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const sidebarItems = [
   { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
@@ -29,6 +31,8 @@ export default function AppLayout({
   const { signOut } = useClerk();
   const { user } = useUser();
 
+  console.log(user);
+
   //it pushes the user to the home page after clicking on the logo icon
   const handleLogoClick = () => {
     router.push("/");
@@ -36,6 +40,7 @@ export default function AppLayout({
 
   const handleSignout = async () => {
     await signOut();
+    toast.success("You have been signed out successfully");
   };
 
   return (
@@ -69,7 +74,7 @@ export default function AppLayout({
             </div>
 
             <div className="flex-none flex items-center space-x-4">
-              {user && (
+              {user ? (
                 <>
                   <div className="avatar">
                     <div className="w-8 h-8 rounded-full">
@@ -92,6 +97,10 @@ export default function AppLayout({
                     <LogOutIcon className="h-6 w-6" />
                   </button>
                 </>
+              ) : (
+                <Link href="/sign-in" className="btn btn-ghost btn-circle">
+                  <LogIn />
+                </Link>
               )}
             </div>
           </div>
