@@ -148,7 +148,10 @@ export default function AppLayout({
           </ul>
           {user && (
             <div className="p-4">
-              <button className="btn btn-outline btn-error w-full">
+              <button
+                className="btn btn-outline btn-error w-full"
+                onClick={handleSignout}
+              >
                 <LogOutIcon className="mr-2 h-5 w-5" />
                 Sign Out
               </button>
