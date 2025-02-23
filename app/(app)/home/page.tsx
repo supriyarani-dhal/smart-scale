@@ -61,9 +61,12 @@ const Home = () => {
     document.body.removeChild(link);
   }, []);
 
-  const handleRemove = useCallback(async (videoId: string) => {
-    setVideos(videos.filter((video) => video.id !== videoId));
-  }, []);
+  const handleRemove = useCallback(
+    async (videoId: string) => {
+      setVideos(videos.filter((video) => video.id !== videoId));
+    },
+    [videos]
+  );
 
   if (loading) {
     return (

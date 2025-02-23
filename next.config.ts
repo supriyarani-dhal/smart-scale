@@ -1,7 +1,43 @@
-import type { NextConfig } from "next";
+import nextPwa from "next-pwa";
+import { NextConfig } from "next";
+
+const pwaConfig = nextPwa({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/your-api-url\.com\/.*/, // Replace with your API
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "api-cache",
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24, // 1 day
+        },
+      },
+    },
+    {
+      urlPattern: /.*/,
+      handler: "StaleWhileRevalidate",
+      options: {
+        cacheName: "static-resources",
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 60 * 60 * 24 * 7, // 1 week
+        },
+      },
+    },
+  ],
+});
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ["res.cloudinary.com", "img.clerk.com"], // ✅ Allow images from Cloudinary
+  },
+  reactStrictMode: true,
+  ...pwaConfig,
 };
 
 export default nextConfig;

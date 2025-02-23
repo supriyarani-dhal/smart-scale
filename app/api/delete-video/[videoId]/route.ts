@@ -4,11 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { videoId: string } }
-) {
-  const videoId = params.videoId;
+interface RouteParams {
+  params: { videoId: string };
+}
+
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const { videoId } = params;
 
   const { userId } = await auth();
 

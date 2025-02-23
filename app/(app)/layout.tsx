@@ -10,6 +10,7 @@ import {
   Share2Icon,
   UploadIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,8 +31,6 @@ export default function AppLayout({
   const router = useRouter();
   const { signOut } = useClerk();
   const { user } = useUser();
-
-  console.log(user);
 
   //it pushes the user to the home page after clicking on the logo icon
   const handleLogoClick = () => {
@@ -78,11 +77,13 @@ export default function AppLayout({
                 <>
                   <div className="avatar">
                     <div className="w-8 h-8 rounded-full">
-                      <img
+                      <Image
                         src={user.imageUrl}
                         alt={
                           user.username || user.emailAddresses[0].emailAddress
                         }
+                        height={32}
+                        width={32}
                       />
                     </div>
                   </div>
@@ -122,10 +123,11 @@ export default function AppLayout({
         ></label>
         <aside className="bg-base-200 w-64 h-full flex flex-col">
           <div className="flex items-center justify-center py-4">
-            <img
+            <Image
               src="/smart_scale_logo.png"
+              width={100}
               alt="Smart Scale"
-              className="w-24"
+              height={100}
             />
           </div>
           <ul className="menu p-4 w-full text-base-content flex-grow">

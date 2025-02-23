@@ -7,6 +7,7 @@ import { filesize } from "filesize";
 import { Clock, Download, FileDown, FileUp, X } from "lucide-react";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
@@ -124,10 +125,12 @@ const VideoCard: React.FC<VideoCardProps> = ({
             />
           )
         ) : (
-          <img
+          <Image
             src={getThumbnailUrl(video.publicId)}
             alt={video.title}
             className="w-full h-full object-cover"
+            height={100}
+            width={100}
           />
         )}
 
