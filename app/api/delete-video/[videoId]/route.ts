@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { videoId: string } }
+  context: { params: Record<string, string> }
 ) {
   const { params } = context; // ✅ Extract params correctly
   const videoId = params.videoId;
