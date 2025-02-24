@@ -6,6 +6,7 @@ const publicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/home",
+  "/manifest.json",
 ]);
 
 const publicApiRoute = createRouteMatcher(["/api/videos"]);
@@ -49,5 +50,6 @@ export const config = {
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
     "/(api|trpc)(.*)",
+    "/((?!_next|.*\\..*).*)", // Ensures Next.js assets aren't blocked
   ],
 };

@@ -4,27 +4,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-// interface RouteParams {
-//   params: { videoId: string };
-// }
-
 export async function DELETE(
   request: NextRequest,
-  context: { params: Record<string, string> }
+  { params }: { params: { videoId: string } }
 ) {
-  const { params } = context; // ✅ Extract params correctly
-  const videoId = params.videoId;
-
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: "You are not authorized to delete videos" },
-      { status: 401 }
-    );
-  }
-
+  console.log(params);
   try {
+    const { videoId } = params;
+
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "You are not authorized to delete videos" },
+        { status: 401 }
+      );
+    }
+
     const deleteVideo = await prisma.video.delete({
       where: {
         id: videoId,

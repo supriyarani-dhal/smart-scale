@@ -129,8 +129,8 @@ const VideoCard: React.FC<VideoCardProps> = ({
             src={getThumbnailUrl(video.publicId)}
             alt={video.title}
             className="w-full h-full object-cover"
-            height={100}
-            width={100}
+            height={300}
+            width={400}
           />
         )}
 
