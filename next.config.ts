@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // 🚨 Ignores TypeScript errors during build
   },
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb", // Increase the limit to 10MB
+    },
+  },
   images: {
     domains: ["res.cloudinary.com", "img.clerk.com"], // ✅ Allow images from Cloudinary
   },
